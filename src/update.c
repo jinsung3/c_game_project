@@ -265,6 +265,10 @@ int move_block(int command)
             break;
         }
     }
+    else
+    {
+        return 1;
+    }
     // 포인터가 블록 종류에 맞게 연결
     switch (block_number)
     {
@@ -293,7 +297,7 @@ int move_block(int command)
     {
         for (j = 0, oldx = x; j < 4; j++, oldx++)
         {
-            if (block[old_block_state][i][j] == 1)
+            if ((*block_pointer)[old_block_state][i][j] == 1)
             {
                 tetris_table[oldy][oldx] = 0;
             }
@@ -309,7 +313,7 @@ int move_block(int command)
         {
             if (newx > 0 && newx < 9 && newy < 20 && newy > 0)
             {
-                tetris_table[newy][newx] = block[block_state][i][j];
+                tetris_table[newy][newx] = (*block_pointer)[block_state][i][j];
             }
         }
     }
@@ -323,11 +327,35 @@ int collision_test(int command)
     int oldx, oldy;
     int temp_block_state;
     int temp_tetris_table[21][10];
+    int(*block_pointer)[4][4][4];
 
     // daisy chain
     oldx = tempx = x;
     oldy = tempy = y;
     temp_block_state = block_state;
+
+    // 포인터가 블록 종류에 맞게 연결
+    switch (block_number)
+    {
+    case 0:
+        block_pointer = &i_block;
+        break;
+    case 1:
+        block_pointer = &t_block;
+        break;
+    case 2:
+        block_pointer = &s_block;
+        break;
+    case 3:
+        block_pointer = &z_block;
+        break;
+    case 4:
+        block_pointer = &j_block;
+        break;
+    case 5:
+        block_pointer = &o_block;
+        break;
+    }
 
     switch (command)
     {
@@ -362,7 +390,7 @@ int collision_test(int command)
     {
         for (j = 0; j < 4; j++)
         {
-            if (temp_tetris_table[tempy + i][tempx + j] == 1 && block[temp_block_state][i][j] == 1)
+            if (temp_tetris_table[tempy + i][tempx + j] == 1 && (*block_pointer)[temp_block_state][i][j] == 1)
             {
                 return 1;
             }
